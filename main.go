@@ -2,7 +2,7 @@
 package main
 
 import (
-	"github.com/joernott/elasticsearch-tools/gobana/cmd"
+	"github.com/joernott/camunda-clean/cmd"
 )
 
 func main() {
