@@ -25,6 +25,7 @@ using the REST API of the camunda engine.`,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		err := HandleConfigFile()
 		if err != nil {
+			fmt.Println("Error handling config file")
 			panic(err)
 		}
 		err = InitLogging()
@@ -40,7 +41,7 @@ using the REST API of the camunda engine.`,
 		var item camunda.ProcessInstance
 		var err error
 		var failed bool
-
+		log.Debug("Initialize connection")
 		Connection, err = camunda.NewCamunda(viper.GetBool("ssl"),
 			viper.GetString("host"),
 			viper.GetInt("port"),
@@ -54,14 +55,19 @@ using the REST API of the camunda engine.`,
 			log.Error(err)
 			os.Exit(11)
 		}
+		log.Debug("Retreive process instances")
 		list, err = Connection.GetProcessInstanceList()
+		log.WithField("Count", len(list)).Debug("List received")
 		if err != nil {
+			log.Error(err)
 			os.Exit(20)
 		}
 		failed = false
 		for _, item = range list {
+			log.WithField("Id", item.Id).Debug("Deleting item")
 			err = Connection.TerminateProcess(item.Id)
 			if err != nil {
+				log.Error(err)
 				failed = true
 			}
 		}
