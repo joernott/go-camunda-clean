@@ -41,7 +41,7 @@ using the REST API of the camunda engine.`,
 		var err error
 		var failed bool
 
-		Connection = camunda.NewCamunda(viper.GetBool("ssl"),
+		Connection, err = camunda.NewCamunda(viper.GetBool("ssl"),
 			viper.GetString("host"),
 			viper.GetInt("port"),
 			viper.GetString("baseendpoint"),
@@ -50,6 +50,10 @@ using the REST API of the camunda engine.`,
 			viper.GetBool("validatessl"),
 			viper.GetString("proxy"),
 			viper.GetBool("socks"))
+		if err != nil {
+			log.Error(err)
+			os.Exit(11)
+		}
 		list, err = Connection.GetProcessInstanceList()
 		if err != nil {
 			os.Exit(20)
